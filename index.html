@@ -166,20 +166,20 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/03/25/%E4%B8%80%E4%BA%9B%20JavaScript%20%E4%B8%AD%E7%9A%84%E4%BB%A3%E7%A0%81%E5%B0%8F%E6%8A%80%E5%B7%A7/">一些 JavaScript 中的代码小技巧</a>
+      <a class="article-title" href="/2020/03/26/%E4%B8%80%E4%BA%9B%20JavaScript%20%E4%B8%AD%E7%9A%84%E4%BB%A3%E7%A0%81%E5%B0%8F%E6%8A%80%E5%B7%A7/">巧用es6</a>
     </h1>
   
 
         
-        <a href="/2020/03/25/%E4%B8%80%E4%BA%9B%20JavaScript%20%E4%B8%AD%E7%9A%84%E4%BB%A3%E7%A0%81%E5%B0%8F%E6%8A%80%E5%B7%A7/" class="archive-article-date">
-  	<time datetime="2020-03-25T12:23:31.005Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-25</time>
+        <a href="/2020/03/26/%E4%B8%80%E4%BA%9B%20JavaScript%20%E4%B8%AD%E7%9A%84%E4%BB%A3%E7%A0%81%E5%B0%8F%E6%8A%80%E5%B7%A7/" class="archive-article-date">
+  	<time datetime="2020-03-26T08:04:20.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-26</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="一些-JavaScript-中的代码小技巧"><a href="#一些-JavaScript-中的代码小技巧" class="headerlink" title="一些 JavaScript 中的代码小技巧"></a>一些 JavaScript 中的代码小技巧</h1><h3 id="一、JSON-stringify"><a href="#一、JSON-stringify" class="headerlink" title="一、JSON.stringify"></a><strong>一、JSON.stringify</strong></h3><p>我们平时经常会用到 <code>JSON</code> 对象，比如当我们要实现对象的深拷贝时，我们可以用 <code>JSON</code> 对象的 <code>JSON.stringify</code>和 <code>JSON.parse</code> 来拷贝一个完全一样的对象，而不会对原对象产生任何引用关系。在使用 <code>localStorage</code> 时，也会用到它，因为 <code>localStorage</code> 只能存储字符串格式的内容，所以，我们在存之前，将数值转换成 <code>JSON字符串</code>，取出来用的时候，再转成对象或数组。</p>
+        <h1 id="巧用es6"><a href="#巧用es6" class="headerlink" title="巧用es6"></a>巧用es6</h1><h3 id="一、JSON-stringify"><a href="#一、JSON-stringify" class="headerlink" title="一、JSON.stringify"></a><strong>一、JSON.stringify</strong></h3><p>我们平时经常会用到 <code>JSON</code> 对象，比如当我们要实现对象的深拷贝时，我们可以用 <code>JSON</code> 对象的 <code>JSON.stringify</code>和 <code>JSON.parse</code> 来拷贝一个完全一样的对象，而不会对原对象产生任何引用关系。在使用 <code>localStorage</code> 时，也会用到它，因为 <code>localStorage</code> 只能存储字符串格式的内容，所以，我们在存之前，将数值转换成 <code>JSON字符串</code>，取出来用的时候，再转成对象或数组。</p>
 <p>对于 <code>JSON.stringify</code> 方法，它可以帮我们把一个<strong>对象或数组</strong>转换成一个 <code>JSON字符串</code>。我们通常只会用到它的第一个参数，其实它还有另外两个参数，可以让它实现一些非常好用的功能。</p>
 <p>首先来看语法：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">JSON</span>.stringify(value[, replacer [, space]])</span><br></pre></td></tr></table></figure>
@@ -242,11 +242,22 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">js</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2020/03/25/%E4%B8%80%E4%BA%9B%20JavaScript%20%E4%B8%AD%E7%9A%84%E4%BB%A3%E7%A0%81%E5%B0%8F%E6%8A%80%E5%B7%A7/">展开全文 >></a>
+          <a class="article-more-a" href="/2020/03/26/%E4%B8%80%E4%BA%9B%20JavaScript%20%E4%B8%AD%E7%9A%84%E4%BB%A3%E7%A0%81%E5%B0%8F%E6%8A%80%E5%B7%A7/">展开全文 >></a>
         </p>
       
 
