@@ -159,34 +159,42 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-webpack" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <article id="post-组件的通信3：findComponents" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/05/30/webpack/">webpack</a>
+      <a class="article-title" href="/2020/04/25/%E7%BB%84%E4%BB%B6%E7%9A%84%E9%80%9A%E4%BF%A13%EF%BC%9AfindComponents/">组件的通信</a>
     </h1>
   
 
         
-        <a href="/2020/05/30/webpack/" class="archive-article-date">
-  	<time datetime="2020-05-30T03:12:17.190Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-30</time>
+        <a href="/2020/04/25/%E7%BB%84%E4%BB%B6%E7%9A%84%E9%80%9A%E4%BF%A13%EF%BC%9AfindComponents/" class="archive-article-date">
+  	<time datetime="2020-04-25T11:15:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-25</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="webpack-常用插件总结归类"><a href="#webpack-常用插件总结归类" class="headerlink" title="webpack 常用插件总结归类"></a>webpack 常用插件总结归类</h1><h2 id="功能类"><a href="#功能类" class="headerlink" title="功能类"></a>功能类</h2><h3 id="html-webpack-plugin"><a href="#html-webpack-plugin" class="headerlink" title="html-webpack-plugin"></a>html-webpack-plugin</h3><p>自动生成html，基本用法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">new HtmlWebpackPlugin(&#123;</span><br><span class="line">  filename: &#39;index.html&#39;, &#x2F;&#x2F; 生成文件名</span><br><span class="line">  template: path.join(process.cwd(), &#39;.&#x2F;index.html&#39;) &#x2F;&#x2F; 模班文件</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
-
-<h3 id="copy-webpack-plugin"><a href="#copy-webpack-plugin" class="headerlink" title="copy-webpack-plugin"></a>copy-webpack-plugin</h3><p>拷贝资源插件</p>
-<p>基本用法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">new CopyWebpackPlugin([</span><br><span class="line">  &#123;</span><br><span class="line">    from: path.join(process.cwd(), &#39;.&#x2F;vendor&#x2F;&#39;),</span><br><span class="line">    to: path.join(process.cwd(), &#39;.&#x2F;dist&#x2F;&#39;),</span><br><span class="line">    ignore: [&#39;*.json&#39;]</span><br><span class="line">  &#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+        <h1 id="组件的通信-3：找到任意组件实例——findComponents-系列方法"><a href="#组件的通信-3：找到任意组件实例——findComponents-系列方法" class="headerlink" title="组件的通信 3：找到任意组件实例——findComponents 系列方法"></a>组件的通信 3：找到任意组件实例——findComponents 系列方法</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>前面的小节我们已经介绍了两种组件间通信的方法：provide / inject 和 dispatch / broadcast。它们有各自的使用场景和局限，比如前者多用于子组件获取父组件的状态，后者常用于父子组件间通过自定义事件通信。</p>
+<p>本节将介绍第 3 种组件通信方法，也就是 findComponents 系列方法，它并非 Vue.js 内置，而是需要自行实现，以工具函数的形式来使用，它是一系列的函数，可以说是组件通信的终极方案。findComponents 系列方法最终都是返回组件的实例，进而可以读取或调用该组件的数据和方法。</p>
+<p>它适用于以下场景：</p>
+<ul>
+<li>由一个组件，向上找到最近的指定组件；</li>
+<li>由一个组件，向上找到所有的指定组件；</li>
+<li>由一个组件，向下找到最近的指定组件；</li>
+<li>由一个组件，向下找到所有指定的组件；</li>
+<li>由一个组件，找到指定组件的兄弟组件。</li>
+</ul>
+<p>5 个不同的场景，对应 5 个不同的函数，实现原理也大同小异。</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>5 个函数的原理，都是通过递归、遍历，找到指定组件的 <code>name</code> 选项匹配的组件实例并返回。</p>
+<p>在目录 <code>src</code> 下新建文件夹 <code>utils</code> 用来放置工具函数，并新建文件 <code>assist.js</code>，本节所有函数都在这个文件里完成，每个函数都通过 <code>export</code> 对外提供。</p>
+<h3 id="向上找到最近的指定组件——findComponentUpward"><a href="#向上找到最近的指定组件——findComponentUpward" class="headerlink" title="向上找到最近的指定组件——findComponentUpward"></a>向上找到最近的指定组件——findComponentUpward</h3>
         
-          <a class="article-more-a" href="/2020/05/30/webpack/#more">more >></a>
+          <a class="article-more-a" href="/2020/04/25/%E7%BB%84%E4%BB%B6%E7%9A%84%E9%80%9A%E4%BF%A13%EF%BC%9AfindComponents/#more">more >></a>
         
       
 
@@ -195,11 +203,271 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">vue</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
         <p class="article-more-link">
-          <a class="article-more-a" href="/2020/05/30/webpack/">展开全文 >></a>
+          <a class="article-more-a" href="/2020/04/25/%E7%BB%84%E4%BB%B6%E7%9A%84%E9%80%9A%E4%BF%A13%EF%BC%9AfindComponents/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Vue.js 组件的三个 API：prop、event、slot" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/04/20/Vue.js%20%E7%BB%84%E4%BB%B6%E7%9A%84%E4%B8%89%E4%B8%AA%20API%EF%BC%9Aprop%E3%80%81event%E3%80%81slot/">Vue 知识体系中的十个实用技巧</a>
+    </h1>
+  
+
+        
+        <a href="/2020/04/20/Vue.js%20%E7%BB%84%E4%BB%B6%E7%9A%84%E4%B8%89%E4%B8%AA%20API%EF%BC%9Aprop%E3%80%81event%E3%80%81slot/" class="archive-article-date">
+  	<time datetime="2020-04-20T08:56:20.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-20</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="基础：Vue-js-组件的三个-API：prop、event、slot"><a href="#基础：Vue-js-组件的三个-API：prop、event、slot" class="headerlink" title="基础：Vue.js 组件的三个 API：prop、event、slot"></a>基础：Vue.js 组件的三个 API：prop、event、slot</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如果您已经对 Vue.js 组件的基础用法了如指掌，可以跳过本小节，不过当做复习稍读一下也无妨。</span><br></pre></td></tr></table></figure>
+
+<h2 id="组件的构成"><a href="#组件的构成" class="headerlink" title="组件的构成"></a>组件的构成</h2><p>一个再复杂的组件，都是由三部分组成的：prop、event、slot，它们构成了 Vue.js 组件的 API。如果你开发的是一个通用组件，那一定要事先设计好这三部分，因为组件一旦发布，后面再修改 API 就很困难了，使用者都是希望不断新增功能，修复 bug，而不是经常变更接口。如果你阅读别人写的组件，也可以从这三个部分展开，它们可以帮助你快速了解一个组件的所有功能。</p>
+<h3 id="属性-prop"><a href="#属性-prop" class="headerlink" title="属性 prop"></a>属性 prop</h3><p><code>prop</code> 定义了这个组件有哪些可配置的属性，组件的核心功能也都是它来确定的。写通用组件时，props 最好用<strong>对象</strong>的写法，这样可以针对每个属性设置类型、默认值或自定义校验属性的值，这点在组件开发中很重要，然而很多人却忽视，直接使用 props 的数组用法，这样的组件往往是不严谨的。比如我们封装一个按钮组件 <code>&lt;i-button&gt;</code>：</p>
+        
+          <a class="article-more-a" href="/2020/04/20/Vue.js%20%E7%BB%84%E4%BB%B6%E7%9A%84%E4%B8%89%E4%B8%AA%20API%EF%BC%9Aprop%E3%80%81event%E3%80%81slot/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">vue</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/04/20/Vue.js%20%E7%BB%84%E4%BB%B6%E7%9A%84%E4%B8%89%E4%B8%AA%20API%EF%BC%9Aprop%E3%80%81event%E3%80%81slot/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-组件的通信 2：派发与广播——自行实现 dispatch 和 broadcast 方法" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/04/17/%E7%BB%84%E4%BB%B6%E7%9A%84%E9%80%9A%E4%BF%A1%202%EF%BC%9A%E6%B4%BE%E5%8F%91%E4%B8%8E%E5%B9%BF%E6%92%AD%E2%80%94%E2%80%94%E8%87%AA%E8%A1%8C%E5%AE%9E%E7%8E%B0%20dispatch%20%E5%92%8C%20broadcast%20%E6%96%B9%E6%B3%95/">组件的通信</a>
+    </h1>
+  
+
+        
+        <a href="/2020/04/17/%E7%BB%84%E4%BB%B6%E7%9A%84%E9%80%9A%E4%BF%A1%202%EF%BC%9A%E6%B4%BE%E5%8F%91%E4%B8%8E%E5%B9%BF%E6%92%AD%E2%80%94%E2%80%94%E8%87%AA%E8%A1%8C%E5%AE%9E%E7%8E%B0%20dispatch%20%E5%92%8C%20broadcast%20%E6%96%B9%E6%B3%95/" class="archive-article-date">
+  	<time datetime="2020-04-17T07:15:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-17</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="组件的通信-2：派发与广播——自行实现-dispatch-和-broadcast-方法"><a href="#组件的通信-2：派发与广播——自行实现-dispatch-和-broadcast-方法" class="headerlink" title="组件的通信 2：派发与广播——自行实现 dispatch 和 broadcast 方法"></a>组件的通信 2：派发与广播——自行实现 dispatch 和 broadcast 方法</h1><p>上一讲的 provide / inject API 主要解决了跨级组件间的通信问题，不过它的使用场景，主要是子组件获取上级组件的状态，跨级组件间建立了一种主动提供与依赖注入的关系。然后有两种场景它不能很好的解决：</p>
+<ul>
+<li>父组件向子组件（支持跨级）传递数据；</li>
+<li>子组件向父组件（支持跨级）传递数据。</li>
+</ul>
+<p>这种父子（含跨级）传递数据的通信方式，Vue.js 并没有提供原生的 API 来支持，而是推荐使用大型数据状态管理工具 Vuex，而我们之前已经介绍过 Vuex 的场景与在独立组件（或库）中使用的限制。本小节则介绍一种在父子组件间通信的方法 <code>dispatch</code> 和 <code>broadcast</code>。</p>
+<h2 id="on-与-emit"><a href="#on-与-emit" class="headerlink" title="$on 与 $emit"></a>$on 与 $emit</h2><p>如果您使用过较早的 Vue.js 1.x 版本，肯定对 <em>$dispatch</em> 和 <em>$broadcast</em> 这两个内置的方法很熟悉，不过它们都在 Vue.js 2.x 里废弃了。在正式介绍主角前，我们先看看 <code>$on</code> 与 <code>$emit</code> 这两个 API，因为它们是本节内容的基础。</p>
+<p><code>$emit</code> 会在<strong>当前组件</strong>实例上触发自定义事件，并传递一些参数给监听器的回调，一般来说，都是在父级调用这个组件时，使用 <code>@on</code> 的方式来监听自定义事件的，比如在子组件中触发事件：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// child.vue，部分代码省略</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  methods: &#123;</span><br><span class="line">    handleEmitEvent () &#123;</span><br><span class="line">      <span class="keyword">this</span>.$emit(<span class="string">'test'</span>, <span class="string">'Hello Vue.js'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+          <a class="article-more-a" href="/2020/04/17/%E7%BB%84%E4%BB%B6%E7%9A%84%E9%80%9A%E4%BF%A1%202%EF%BC%9A%E6%B4%BE%E5%8F%91%E4%B8%8E%E5%B9%BF%E6%92%AD%E2%80%94%E2%80%94%E8%87%AA%E8%A1%8C%E5%AE%9E%E7%8E%B0%20dispatch%20%E5%92%8C%20broadcast%20%E6%96%B9%E6%B3%95/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">vue</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/04/17/%E7%BB%84%E4%BB%B6%E7%9A%84%E9%80%9A%E4%BF%A1%202%EF%BC%9A%E6%B4%BE%E5%8F%91%E4%B8%8E%E5%B9%BF%E6%92%AD%E2%80%94%E2%80%94%E8%87%AA%E8%A1%8C%E5%AE%9E%E7%8E%B0%20dispatch%20%E5%92%8C%20broadcast%20%E6%96%B9%E6%B3%95/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-组件的通信 1：provide [ inject" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/04/07/%E7%BB%84%E4%BB%B6%E7%9A%84%E9%80%9A%E4%BF%A1%201%EF%BC%9Aprovide%20%5B%20inject/">组件的通信</a>
+    </h1>
+  
+
+        
+        <a href="/2020/04/07/%E7%BB%84%E4%BB%B6%E7%9A%84%E9%80%9A%E4%BF%A1%201%EF%BC%9Aprovide%20%5B%20inject/" class="archive-article-date">
+  	<time datetime="2020-04-07T12:15:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-07</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="组件的通信-1：什么是-provide-inject"><a href="#组件的通信-1：什么是-provide-inject" class="headerlink" title="组件的通信 1：什么是 provide / inject"></a>组件的通信 1：什么是 provide / inject</h1><p><code>provide / inject</code> 是 Vue.js 2.2.0 版本后新增的 API，在文档中这样介绍 ：</p>
+<blockquote>
+<p><a href="https://cn.vuejs.org/v2/api/#provide-inject" target="_blank" rel="noopener">https://cn.vuejs.org/v2/api/#provide-inject</a></p>
+<p>这对选项需要一起使用，以允许一个祖先组件向其所有子孙后代注入一个依赖，不论组件层次有多深，并在起上下游关系成立的时间里始终生效。如果你熟悉 React，这与 React 的上下文特性很相似。</p>
+</blockquote>
+<p>并且文档中有如下提示：</p>
+<blockquote>
+<p>provide 和 inject 主要为高阶插件/组件库提供用例。并不推荐直接用于应用程序代码中。</p>
+</blockquote>
+<p>看不懂上面的介绍没有关系，不过上面的这句提示应该明白，就是说 Vue.js 不建议在业务中使用这对 API，而是在插件 / 组件库（比如 iView，事实上 iView 的很多组件都在用）。<strong>不过建议归建议，如果你用好了，这个 API 会非常有用。</strong></p>
+<p>我们先来看一下这个 API 怎么用，假设有两个组件： <strong>A.vue</strong> 和 <strong>B.vue</strong>，B 是 A 的子组件。</p>
+        
+          <a class="article-more-a" href="/2020/04/07/%E7%BB%84%E4%BB%B6%E7%9A%84%E9%80%9A%E4%BF%A1%201%EF%BC%9Aprovide%20%5B%20inject/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">vue</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/04/07/%E7%BB%84%E4%BB%B6%E7%9A%84%E9%80%9A%E4%BF%A1%201%EF%BC%9Aprovide%20%5B%20inject/">展开全文 >></a>
         </p>
       
 
@@ -279,6 +547,87 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2020/03/26/%E4%B8%80%E4%BA%9B%20JavaScript%20%E4%B8%AD%E7%9A%84%E4%BB%A3%E7%A0%81%E5%B0%8F%E6%8A%80%E5%B7%A7/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-webpack" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/03/26/webpack/">webpack常用插件</a>
+    </h1>
+  
+
+        
+        <a href="/2020/03/26/webpack/" class="archive-article-date">
+  	<time datetime="2020-03-26T08:04:20.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-26</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="webpack-常用插件总结归类"><a href="#webpack-常用插件总结归类" class="headerlink" title="webpack 常用插件总结归类"></a>webpack 常用插件总结归类</h1><h2 id="功能类"><a href="#功能类" class="headerlink" title="功能类"></a>功能类</h2><h3 id="html-webpack-plugin"><a href="#html-webpack-plugin" class="headerlink" title="html-webpack-plugin"></a>html-webpack-plugin</h3><p>自动生成html，基本用法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">new HtmlWebpackPlugin(&#123;</span><br><span class="line">  filename: &#39;index.html&#39;, &#x2F;&#x2F; 生成文件名</span><br><span class="line">  template: path.join(process.cwd(), &#39;.&#x2F;index.html&#39;) &#x2F;&#x2F; 模班文件</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="copy-webpack-plugin"><a href="#copy-webpack-plugin" class="headerlink" title="copy-webpack-plugin"></a>copy-webpack-plugin</h3><p>拷贝资源插件</p>
+<p>基本用法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">new CopyWebpackPlugin([</span><br><span class="line">  &#123;</span><br><span class="line">    from: path.join(process.cwd(), &#39;.&#x2F;vendor&#x2F;&#39;),</span><br><span class="line">    to: path.join(process.cwd(), &#39;.&#x2F;dist&#x2F;&#39;),</span><br><span class="line">    ignore: [&#39;*.json&#39;]</span><br><span class="line">  &#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+        
+          <a class="article-more-a" href="/2020/03/26/webpack/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">webpack</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/03/26/webpack/">展开全文 >></a>
         </p>
       
 
@@ -717,6 +1066,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">vue</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">webpack</a>
               </li>
             
             <div class="clearfix"></div>

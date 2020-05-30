@@ -6,19 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://boy-yan.github.io.">
-  <title>如何使用 | 个人博客</title>
+  <title>组件的通信 | 个人博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="常见命令1234567hexo new &quot;postName&quot; #新建文章hexo new page &quot;pageName&quot; #新建页面hexo generate #生成静态页面至public目录hexo server #开启预览访问端口（默认端口4000，&#39;ctrl + c&#39;关闭server）hexo deploy #部署到GitHubhexo">
+  <meta name="description" content="组件的通信 2：派发与广播——自行实现 dispatch 和 broadcast 方法上一讲的 provide &#x2F; inject API 主要解决了跨级组件间的通信问题，不过它的使用场景，主要是子组件获取上级组件的状态，跨级组件间建立了一种主动提供与依赖注入的关系。然后有两种场景它不能很好的解决：  父组件向子组件（支持跨级）传递数据； 子组件向父组件（支持跨级）传递数据。  这种父子（含跨级）传">
 <meta property="og:type" content="article">
-<meta property="og:title" content="如何使用">
-<meta property="og:url" content="http://boy-yan.github.io./2020/03/07/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:title" content="组件的通信">
+<meta property="og:url" content="http://boy-yan.github.io./2020/04/17/%E7%BB%84%E4%BB%B6%E7%9A%84%E9%80%9A%E4%BF%A1%202%EF%BC%9A%E6%B4%BE%E5%8F%91%E4%B8%8E%E5%B9%BF%E6%92%AD%E2%80%94%E2%80%94%E8%87%AA%E8%A1%8C%E5%AE%9E%E7%8E%B0%20dispatch%20%E5%92%8C%20broadcast%20%E6%96%B9%E6%B3%95/index.html">
 <meta property="og:site_name" content="个人博客">
-<meta property="og:description" content="常见命令1234567hexo new &quot;postName&quot; #新建文章hexo new page &quot;pageName&quot; #新建页面hexo generate #生成静态页面至public目录hexo server #开启预览访问端口（默认端口4000，&#39;ctrl + c&#39;关闭server）hexo deploy #部署到GitHubhexo">
+<meta property="og:description" content="组件的通信 2：派发与广播——自行实现 dispatch 和 broadcast 方法上一讲的 provide &#x2F; inject API 主要解决了跨级组件间的通信问题，不过它的使用场景，主要是子组件获取上级组件的状态，跨级组件间建立了一种主动提供与依赖注入的关系。然后有两种场景它不能很好的解决：  父组件向子组件（支持跨级）传递数据； 子组件向父组件（支持跨级）传递数据。  这种父子（含跨级）传">
 <meta property="og:locale" content="Zh_CN">
-<meta property="article:published_time" content="2020-03-07T10:15:23.000Z">
-<meta property="article:modified_time" content="2020-03-07T10:57:17.064Z">
+<meta property="article:published_time" content="2020-04-17T07:15:36.000Z">
+<meta property="article:modified_time" content="2020-05-30T03:47:34.708Z">
 <meta property="article:author" content="Guo Yan">
-<meta property="article:tag" content="随笔">
+<meta property="article:tag" content="vue">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="个人博客" type="application/atom+xml">
@@ -139,30 +139,90 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-如何使用" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-组件的通信 2：派发与广播——自行实现 dispatch 和 broadcast 方法" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      如何使用
+      组件的通信
     </h1>
   
 
         
-        <a href="/2020/03/07/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8/" class="archive-article-date">
-  	<time datetime="2020-03-07T10:15:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-07</time>
+        <a href="/2020/04/17/%E7%BB%84%E4%BB%B6%E7%9A%84%E9%80%9A%E4%BF%A1%202%EF%BC%9A%E6%B4%BE%E5%8F%91%E4%B8%8E%E5%B9%BF%E6%92%AD%E2%80%94%E2%80%94%E8%87%AA%E8%A1%8C%E5%AE%9E%E7%8E%B0%20dispatch%20%E5%92%8C%20broadcast%20%E6%96%B9%E6%B3%95/" class="archive-article-date">
+  	<time datetime="2020-04-17T07:15:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-04-17</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h6 id="常见命令"><a href="#常见命令" class="headerlink" title="常见命令"></a>常见命令</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">hexo new &quot;postName&quot; #新建文章</span><br><span class="line">hexo new page &quot;pageName&quot; #新建页面</span><br><span class="line">hexo generate #生成静态页面至public目录</span><br><span class="line">hexo server #开启预览访问端口（默认端口4000，&#39;ctrl + c&#39;关闭server）</span><br><span class="line">hexo deploy #部署到GitHub</span><br><span class="line">hexo help  # 查看帮助</span><br><span class="line">hexo version  #查看Hexo的版本</span><br></pre></td></tr></table></figure>
+        <h1 id="组件的通信-2：派发与广播——自行实现-dispatch-和-broadcast-方法"><a href="#组件的通信-2：派发与广播——自行实现-dispatch-和-broadcast-方法" class="headerlink" title="组件的通信 2：派发与广播——自行实现 dispatch 和 broadcast 方法"></a>组件的通信 2：派发与广播——自行实现 dispatch 和 broadcast 方法</h1><p>上一讲的 provide / inject API 主要解决了跨级组件间的通信问题，不过它的使用场景，主要是子组件获取上级组件的状态，跨级组件间建立了一种主动提供与依赖注入的关系。然后有两种场景它不能很好的解决：</p>
+<ul>
+<li>父组件向子组件（支持跨级）传递数据；</li>
+<li>子组件向父组件（支持跨级）传递数据。</li>
+</ul>
+<p>这种父子（含跨级）传递数据的通信方式，Vue.js 并没有提供原生的 API 来支持，而是推荐使用大型数据状态管理工具 Vuex，而我们之前已经介绍过 Vuex 的场景与在独立组件（或库）中使用的限制。本小节则介绍一种在父子组件间通信的方法 <code>dispatch</code> 和 <code>broadcast</code>。</p>
+<h2 id="on-与-emit"><a href="#on-与-emit" class="headerlink" title="$on 与 $emit"></a>$on 与 $emit</h2><p>如果您使用过较早的 Vue.js 1.x 版本，肯定对 <em>$dispatch</em> 和 <em>$broadcast</em> 这两个内置的方法很熟悉，不过它们都在 Vue.js 2.x 里废弃了。在正式介绍主角前，我们先看看 <code>$on</code> 与 <code>$emit</code> 这两个 API，因为它们是本节内容的基础。</p>
+<p><code>$emit</code> 会在<strong>当前组件</strong>实例上触发自定义事件，并传递一些参数给监听器的回调，一般来说，都是在父级调用这个组件时，使用 <code>@on</code> 的方式来监听自定义事件的，比如在子组件中触发事件：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// child.vue，部分代码省略</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  methods: &#123;</span><br><span class="line">    handleEmitEvent () &#123;</span><br><span class="line">      <span class="keyword">this</span>.$emit(<span class="string">'test'</span>, <span class="string">'Hello Vue.js'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>在父组件中监听由 <em>child.vue</em> 触发的自定义事件 <strong>test</strong>：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- parent.vue，部分代码省略--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">child-component</span> @<span class="attr">test</span>=<span class="string">"handleEvent"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span><br><span class="line">    methods: &#123;</span><br><span class="line">      handleEvent (text) &#123;</span><br><span class="line"><span class="javascript">      	<span class="built_in">console</span>.log(text);  <span class="comment">// Hello Vue.js</span></span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<h6 id="缩写"><a href="#缩写" class="headerlink" title="缩写"></a>缩写</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hexo n &#x3D;&#x3D; hexo new</span><br><span class="line">hexo g &#x3D;&#x3D; hexo generate</span><br><span class="line">hexo s &#x3D;&#x3D; hexo server</span><br><span class="line">hexo d &#x3D;&#x3D; hexo deploy</span><br></pre></td></tr></table></figure>
-<h6 id="组合"><a href="#组合" class="headerlink" title="组合"></a>组合</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo s -g #生成并本地预览</span><br><span class="line">hexo d -g #生成并上传</span><br></pre></td></tr></table></figure>
+<p>这里看似是在父组件 <em>parent.vue</em> 中绑定的自定义事件 <strong>test</strong> 的处理句柄，然而事件 test 并不是在父组件上触发的，而是在子组件 <em>child.vue</em> 里触发的，只是通过 <code>v-on</code> 在父组件中监听。既然是子组件自己触发的，那它自己也可以监听到，这就要使用 <code>$on</code> 来监听实例上的事件，换言之，组件使用 <code>$emit</code> 在自己实例上触发事件，并用 <code>$on</code> 监听它。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> @<span class="attr">click</span>=<span class="string">"handleEmitEvent"</span>&gt;</span>触发自定义事件<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span><br><span class="line">    methods: &#123;</span><br><span class="line">      handleEmitEvent () &#123;</span><br><span class="line"><span class="actionscript">        <span class="comment">// 在当前组件上触发自定义事件 test，并传值</span></span></span><br><span class="line"><span class="actionscript">        <span class="keyword">this</span>.$emit(<span class="string">'test'</span>, <span class="string">'Hello Vue.js'</span>)</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    mounted () &#123;</span><br><span class="line"><span class="actionscript">      <span class="comment">// 监听自定义事件 test</span></span></span><br><span class="line"><span class="actionscript">      <span class="keyword">this</span>.$on(<span class="string">'test'</span>, (text) =&gt; &#123;</span></span><br><span class="line"><span class="javascript">        <span class="built_in">window</span>.alert(text);</span></span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>$on</code> 监听了自己触发的自定义事件 test，因为有时不确定何时会触发事件，一般会在 <code>mounted</code> 或 <code>created</code> 钩子中来监听。</p>
+<p>仅上面的示例，的确是多此一举的，因为大可在 handleEmitEvent 里直接写 window.alert(text)，没必要绕一圈。</p>
+<p>之所以多此一举，是因为 handleEmitEvent 是当前组件内的 <code>&lt;button&gt;</code> 调用的，如果这个方法不是它自己调用，而是其它组件调用的，那这个用法就大有可为了。</p>
+<p>了解了 <code>$on</code> 和 <code>$emit</code> 的用法后，我们再来看两个“过时的” API。</p>
+<h2 id="Vue-js-1-x-的-dispatch-与-broadcast"><a href="#Vue-js-1-x-的-dispatch-与-broadcast" class="headerlink" title="Vue.js 1.x 的 $dispatch 与 $broadcast"></a>Vue.js 1.x 的 $dispatch 与 $broadcast</h2><p>虽然 Vue.js 1.x 已经成为过去时，但为了充分理解本节通信方法的使用场景，还是有必要来了解一点它的历史。</p>
+<p>在 Vue.js 1.x 中，提供了两个方法：<code>$dispatch</code> 和 <code>$broadcast</code> ，前者用于向上级派发事件，只要是它的父级（一级或多级以上），都可以在组件内通过 <code>$on</code> （或 events，2.x 已废弃）监听到，后者相反，是由上级向下级广播事件的。</p>
+<p>来看一个简单的示例：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 注意：该示例为 Vue.js 1.x 版本 --&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 子组件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">button</span> @<span class="attr">click</span>=<span class="string">"handleDispatch"</span>&gt;</span>派发事件<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span><br><span class="line">  methods: &#123;</span><br><span class="line">    handleDispatch () &#123;</span><br><span class="line"><span class="actionscript">      <span class="keyword">this</span>.$dispatch(<span class="string">'test'</span>, <span class="string">'Hello, Vue.js'</span>);</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 父组件，部分代码省略 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">child-component</span>&gt;</span><span class="tag">&lt;/<span class="name">child-component</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span><br><span class="line">    mounted () &#123;</span><br><span class="line"><span class="actionscript">      <span class="keyword">this</span>.$on(<span class="string">'test'</span>, (text) =&gt; &#123;</span></span><br><span class="line"><span class="javascript">        <span class="built_in">console</span>.log(text);  <span class="comment">// Hello, Vue.js</span></span></span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>$broadcast 类似，只不过方向相反。这两种方法一旦发出事件后，任何组件都是可以接收到的，就近原则，而且会在第一次接收到后停止冒泡，除非返回 true。</p>
+<p>这两个方法虽然看起来很好用，但是在 Vue.js 2.x 中都废弃了，官方给出的解释是：</p>
+<blockquote>
+<p>因为基于组件树结构的事件流方式有时让人难以理解，并且在组件结构扩展的过程中会变得越来越脆弱。</p>
+</blockquote>
+<p>虽然在业务开发中，它没有 Vuex 这样专门管理状态的插件清晰好用，但对独立组件（库）的开发，绝对是福音。因为独立组件一般层级并不会很复杂，并且剥离了业务，不会变的难以维护。</p>
+<p>知道了 <em>$dispatch</em> 和 <em>$broadcast</em> 的前世今生，接下来我们就在 Vue.js 2.x 中自行实现这两个方法。</p>
+<h2 id="自行实现-dispatch-和-broadcast-方法"><a href="#自行实现-dispatch-和-broadcast-方法" class="headerlink" title="自行实现 dispatch 和 broadcast 方法"></a>自行实现 dispatch 和 broadcast 方法</h2><p>自行实现的 dispatch 和 broadcast 方法，不能保证跟 Vue.js 1.x 的  <em>$dispatch</em> 和 <em>$broadcast</em> 具有完全相同的体验，但基本功能是一样的，都是解决父子组件（含跨级）间的通信问题。</p>
+<p>通过目前已知的信息，我们要实现的 dispatch 和 broadcast 方法，将具有以下功能：</p>
+<ul>
+<li>在子组件调用 dispatch 方法，向上级指定的组件实例（最近的）上触发自定义事件，并传递数据，且该上级组件已预先通过 <code>$on</code> 监听了这个事件；</li>
+<li>相反，在父组件调用 broadcast 方法，向下级指定的组件实例（最近的）上触发自定义事件，并传递数据，且该下级组件已预先通过 <code>$on</code> 监听了这个事件。</li>
+</ul>
+<p>实现这对方法的关键点在于，如何正确地向上或向下找到对应的组件实例，并在它上面触发方法。在设计一个新功能（features）时，可以先确定这个功能的 API 是什么，也就是说方法名、参数、使用样例，确定好 API，再来写具体的代码。</p>
+<p>因为 Vue.js 内置的方法，才是以 <code>$</code> 开头的，比如 <code>$nextTick</code>、<code>$emit</code> 等，为了避免不必要的冲突并遵循规范，这里的 dispatch 和 broadcast 方法名前不加 <code>$</code>。并且该方法可能在很多组件中都会使用，复用起见，我们封装在混合（mixins）里。那它的使用样例可能是这样的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 部分代码省略</span></span><br><span class="line"><span class="keyword">import</span> Emitter <span class="keyword">from</span> <span class="string">'../mixins/emitter.js'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  mixins: [ Emitter ],</span><br><span class="line">  methods: &#123;</span><br><span class="line">    handleDispatch () &#123;</span><br><span class="line">      <span class="keyword">this</span>.dispatch();  <span class="comment">// ①</span></span><br><span class="line">    &#125;,</span><br><span class="line">    handleBroadcast () &#123;</span><br><span class="line">      <span class="keyword">this</span>.broadcast();  <span class="comment">// ②</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上例中行 ① 和行 ② 的两个方法就是在导入的混合 <strong>emitter.js</strong> 中定义的，这个稍后我们再讲，先来分析这两个方法应该传入什么参数。一般来说，为了跟 Vue.js 1.x 的方法一致，第一个参数应当是自定义事件名，比如 “test”，第二个参数是传递的数据，比如 “Hello, Vue.js”，但在这里，有什么问题呢？只通过这两个参数，我们没办法知道要在哪个组件上触发事件，因为自行实现的这对方法，与 Vue.js 1.x 的原生方法机理上是有区别的。上文说到，实现这对方法的关键点在于准确地<strong>找到组件实例</strong>。那在寻找组件实例上，我们的“惯用伎俩”就是通过遍历来匹配组件的 <code>name</code> 选项，在独立组件（库）里，每个组件的 <code>name</code> 值应当是唯一的，name 主要用于递归组件，在后面小节会单独介绍。</p>
+<p>先来看下 <strong>emitter.js</strong> 的代码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">broadcast</span>(<span class="params">componentName, eventName, params</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">this</span>.$children.forEach(<span class="function"><span class="params">child</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> name = child.$options.name;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (name === componentName) &#123;</span><br><span class="line">      child.$emit.apply(child, [eventName].concat(params));</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      broadcast.apply(child, [componentName, eventName].concat([params]));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  methods: &#123;</span><br><span class="line">    dispatch(componentName, eventName, params) &#123;</span><br><span class="line">      <span class="keyword">let</span> parent = <span class="keyword">this</span>.$parent || <span class="keyword">this</span>.$root;</span><br><span class="line">      <span class="keyword">let</span> name = parent.$options.name;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">while</span> (parent &amp;&amp; (!name || name !== componentName)) &#123;</span><br><span class="line">        parent = parent.$parent;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (parent) &#123;</span><br><span class="line">          name = parent.$options.name;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (parent) &#123;</span><br><span class="line">        parent.$emit.apply(parent, [eventName].concat(params));</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    broadcast(componentName, eventName, params) &#123;</span><br><span class="line">      broadcast.call(<span class="keyword">this</span>, componentName, eventName, params);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>因为是用作 mixins 导入，所以在 methods 里定义的 dispatch 和 broadcast 方法会被混合到组件里，自然就可以用 <code>this.dispatch</code> 和 <code>this.broadcast</code> 来使用。</p>
+<p>这两个方法都接收了三个参数，第一个是组件的 <code>name</code> 值，用于向上或向下递归遍历来寻找对应的组件，第二个和第三个就是上文分析的自定义事件名称和要传递的数据。</p>
+<p>可以看到，在 dispatch 里，通过 <em>while</em> 语句，不断向上遍历更新当前组件（即上下文为当前调用该方法的组件）的父组件实例（变量 parent 即为父组件实例），直到匹配到定义的 <code>componentName</code> 与某个上级组件的 <code>name</code> 选项一致时，结束循环，并在找到的组件实例上，调用 <code>$emit</code> 方法来触发自定义事件 <code>eventName</code>。broadcast 方法与之类似，只不过是向下遍历寻找。</p>
+<p>来看一下具体的使用方法。有 <strong>A.vue</strong> 和 <strong>B.vue</strong> 两个组件，其中 B 是 A 的子组件，中间可能跨多级，在 A 中向 B 通信：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- A.vue --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">button</span> @<span class="attr">click</span>=<span class="string">"handleClick"</span>&gt;</span>触发事件<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="javascript">  <span class="keyword">import</span> Emitter <span class="keyword">from</span> <span class="string">'../mixins/emitter.js'</span>;</span></span><br><span class="line">  </span><br><span class="line"><span class="javascript">  <span class="keyword">export</span> <span class="keyword">default</span> &#123;</span></span><br><span class="line"><span class="actionscript">    name: <span class="string">'componentA'</span>,</span></span><br><span class="line">    mixins: [ Emitter ],</span><br><span class="line">    methods: &#123;</span><br><span class="line">      handleClick () &#123;</span><br><span class="line"><span class="actionscript">        <span class="keyword">this</span>.broadcast(<span class="string">'componentB'</span>, <span class="string">'on-message'</span>, <span class="string">'Hello Vue.js'</span>);</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// B.vue</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  name: <span class="string">'componentB'</span>,</span><br><span class="line">  created () &#123;</span><br><span class="line">    <span class="keyword">this</span>.$on(<span class="string">'on-message'</span>, <span class="keyword">this</span>.showMessage);</span><br><span class="line">  &#125;,</span><br><span class="line">  methods: &#123;</span><br><span class="line">    showMessage (text) &#123;</span><br><span class="line">      <span class="built_in">window</span>.alert(text);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>同理，如果是 B 向 A 通信，在 B 中调用 dispatch 方法，在 A 中使用 $on 监听事件即可。</p>
+<p>以上就是自行实现的 dispatch 和 broadcast 方法，相比 Vue.js 1.x，有以下不同：</p>
+<ul>
+<li>需要额外传入组件的 name 作为第一个参数；</li>
+<li>无冒泡机制；</li>
+<li>第三个参数传递的数据，只能是一个（较多时可以传入一个对象），而 Vue.js 1.x 可以传入多个参数，当然，你对 emitter.js 稍作修改，也能支持传入多个参数，只是一般场景传入一个对象足以。</li>
+</ul>
+
       
 
       
@@ -175,7 +235,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">随笔</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">vue</a>
         		</li>
       		
 		</ul>
@@ -194,18 +254,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2020/03/08/JS-base/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2020/04/20/Vue.js%20%E7%BB%84%E4%BB%B6%E7%9A%84%E4%B8%89%E4%B8%AA%20API%EF%BC%9Aprop%E3%80%81event%E3%80%81slot/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          js基础
+          Vue 知识体系中的十个实用技巧
         
       </div>
     </a>
   
   
-    <a href="/2020/03/07/my-first-blog/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">我的第一篇博客文章，记录下创建过程</div>
+    <a href="/2020/04/07/%E7%BB%84%E4%BB%B6%E7%9A%84%E9%80%9A%E4%BF%A1%201%EF%BC%9Aprovide%20%5B%20inject/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">组件的通信</div>
       <i class="icon-circle-right"></i>
     </a>
   
