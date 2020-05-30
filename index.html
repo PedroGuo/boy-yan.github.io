@@ -159,6 +159,76 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-webpack" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/30/webpack/">webpack</a>
+    </h1>
+  
+
+        
+        <a href="/2020/05/30/webpack/" class="archive-article-date">
+  	<time datetime="2020-05-30T03:12:17.190Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-30</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="webpack-常用插件总结归类"><a href="#webpack-常用插件总结归类" class="headerlink" title="webpack 常用插件总结归类"></a>webpack 常用插件总结归类</h1><h2 id="功能类"><a href="#功能类" class="headerlink" title="功能类"></a>功能类</h2><h3 id="html-webpack-plugin"><a href="#html-webpack-plugin" class="headerlink" title="html-webpack-plugin"></a>html-webpack-plugin</h3><p>自动生成html，基本用法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">new HtmlWebpackPlugin(&#123;</span><br><span class="line">  filename: &#39;index.html&#39;, &#x2F;&#x2F; 生成文件名</span><br><span class="line">  template: path.join(process.cwd(), &#39;.&#x2F;index.html&#39;) &#x2F;&#x2F; 模班文件</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="copy-webpack-plugin"><a href="#copy-webpack-plugin" class="headerlink" title="copy-webpack-plugin"></a>copy-webpack-plugin</h3><p>拷贝资源插件</p>
+<p>基本用法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">new CopyWebpackPlugin([</span><br><span class="line">  &#123;</span><br><span class="line">    from: path.join(process.cwd(), &#39;.&#x2F;vendor&#x2F;&#39;),</span><br><span class="line">    to: path.join(process.cwd(), &#39;.&#x2F;dist&#x2F;&#39;),</span><br><span class="line">    ignore: [&#39;*.json&#39;]</span><br><span class="line">  &#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+        
+          <a class="article-more-a" href="/2020/05/30/webpack/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/05/30/webpack/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-一些 JavaScript 中的代码小技巧" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
