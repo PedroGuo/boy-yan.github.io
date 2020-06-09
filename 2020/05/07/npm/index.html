@@ -6,38 +6,24 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://boy-yan.github.io.">
-  <title>Tag: webpack | 个人博客</title>
+  <title>组件的通信 | 个人博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录个人成长的点点滴滴">
-<meta property="og:type" content="website">
-<meta property="og:title" content="个人博客">
-<meta property="og:url" content="http://boy-yan.github.io./tags/webpack/index.html">
+  <meta name="description" content="Vue组件如何发布至npm 1. 项目初始化   首先，要创建项目  封装vue的插件，以前我们初始化vue工程都是用 vue-cli 完整配置模板，也就是：  1vue create my-project   但是我们要写的是一个简单的vue组件，不需要依赖那么多而庞大的配置，所以，这里我们用简介版本的webapck配置模板：也就是  1vue init webpack-simple my-pr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="组件的通信">
+<meta property="og:url" content="http://boy-yan.github.io./2020/05/07/npm/index.html">
 <meta property="og:site_name" content="个人博客">
-<meta property="og:description" content="记录个人成长的点点滴滴">
+<meta property="og:description" content="Vue组件如何发布至npm 1. 项目初始化   首先，要创建项目  封装vue的插件，以前我们初始化vue工程都是用 vue-cli 完整配置模板，也就是：  1vue create my-project   但是我们要写的是一个简单的vue组件，不需要依赖那么多而庞大的配置，所以，这里我们用简介版本的webapck配置模板：也就是  1vue init webpack-simple my-pr">
 <meta property="og:locale" content="Zh_CN">
+<meta property="og:image" content="http://boy-yan.github.io./2020/05/07/npm/%5Cimg%5Cvue_comp%5Cvue_01.png">
+<meta property="og:image" content="http://boy-yan.github.io./2020/05/07/npm/%5Cimg%5Cvue_comp%5Cvue_02.png">
+<meta property="og:image" content="http://boy-yan.github.io./2020/05/07/npm/%5Cimg%5Cvue_comp%5Cvue_033.png">
+<meta property="article:published_time" content="2020-05-07T06:15:45.000Z">
+<meta property="article:modified_time" content="2020-06-09T06:52:51.707Z">
 <meta property="article:author" content="Guo Yan">
-<meta property="article:tag" content="前端">
-<meta property="article:tag" content="js">
-<meta property="article:tag" content="jquery">
-<meta property="article:tag" content="javascript">
-<meta property="article:tag" content="html5">
-<meta property="article:tag" content="开发者">
-<meta property="article:tag" content="程序猿">
-<meta property="article:tag" content="程序媛">
-<meta property="article:tag" content="极客">
-<meta property="article:tag" content="编程">
-<meta property="article:tag" content="代码">
-<meta property="article:tag" content="开源">
-<meta property="article:tag" content="IT网站">
-<meta property="article:tag" content="Developer">
-<meta property="article:tag" content="Programmer">
-<meta property="article:tag" content="Coder">
-<meta property="article:tag" content="Geek">
-<meta property="article:tag" content="html">
-<meta property="article:tag" content="css">
-<meta property="article:tag" content="css3">
-<meta property="article:tag" content="用户体验">
+<meta property="article:tag" content="vue vue组件">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://boy-yan.github.io./2020/05/07/npm/%5Cimg%5Cvue_comp%5Cvue_01.png">
   
     <link rel="alternative" href="/atom.xml" title="个人博客" type="application/atom+xml">
   
@@ -157,60 +143,158 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-npm" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2020" class="archive-year">2020</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2020/03/26/webpack/" class="archive-article-date">
-  	<time datetime="2020-03-26T08:04:20.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-03-26</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2020/03/26/webpack/">webpack常用插件</a>
+    <h1 class="article-title" itemprop="name">
+      组件的通信
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2020/05/07/npm/" class="archive-article-date">
+  	<time datetime="2020-05-07T06:15:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-05-07</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="Vue组件如何发布至npm"><a href="#Vue组件如何发布至npm" class="headerlink" title="Vue组件如何发布至npm"></a>Vue组件如何发布至npm</h3><p> <strong>1. 项目初始化</strong> </p>
+<p> 首先，要创建项目  封装vue的插件，以前我们初始化vue工程都是用 vue-cli 完整配置模板，也就是： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vue create my-project</span><br></pre></td></tr></table></figure>
+
+<p> 但是我们要写的是一个简单的vue组件，不需要依赖那么多而庞大的配置，所以，这里我们用简介版本的<code>webapck</code>配置模板：也就是 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vue init webpack-simple my-project</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>1.1. 初始化完成后，我们来看下目录：</p>
+<p><img src="%5Cimg%5Cvue_comp%5Cvue_01.png" alt=""></p>
+<p>1.2. 既然是封装组件，那我们在src下面创建一个 myComponents文件夹规整一点吧，然后，我们在 myComponents下面放我们的组件，但是考虑到万一要写很多个的情况，这里我们就区分一下吧（如果个人习惯不想区分也行，只是方便管理），当前组件的相关文件我们给一个 sumFuntion 文件夹名字，下面创建 sum-function.vue 和 index.js 先，结构变成下面这样：</p>
+<p><img src="%5Cimg%5Cvue_comp%5Cvue_02.png" alt=""></p>
+<p>1.3. 接下来，老规矩，打开终端，安装依赖，启动项目：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br><span class="line">npm run dev</span><br></pre></td></tr></table></figure>
+
+<p>然后，我们来写 sum-function.vue ，自然是我们的组件代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div class&#x3D;&quot;calculate&quot;&gt;</span><br><span class="line">    &lt;p&gt;&#123;&#123;a&#125;&#125;+&#123;&#123;b&#125;&#125;&#x3D;&#123;&#123;sum&#125;&#125;&lt;&#x2F;p&gt;</span><br><span class="line">    &lt;input type&#x3D;&quot;text&quot; v-model&#x3D;&quot;a&quot; style&#x3D;&quot;width:30px;text-align:center&quot; @blur&#x3D;&quot;sumFunc&quot;&#x2F;&gt;</span><br><span class="line">    &lt;span class&#x3D;&quot;symbol&quot;&gt;+&lt;&#x2F;span&gt;</span><br><span class="line">    &lt;input type&#x3D;&quot;text&quot; v-model&#x3D;&quot;b&quot; style&#x3D;&quot;width:30px;text-align:center&quot; @blur&#x3D;&quot;sumFunc&quot;&#x2F;&gt;</span><br><span class="line">    &lt;span class&#x3D;&quot;symbol&quot; @click&#x3D;&quot;sumFunc&quot;&gt; &#x3D; &lt;&#x2F;span&gt;</span><br><span class="line">    &lt;span class&#x3D;&quot;item&quot;&gt;&#123;&#123;sum&#125;&#125;&lt;&#x2F;span&gt;</span><br><span class="line">  &lt;&#x2F;div&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">  export default(&#123;</span><br><span class="line">    name:&#39;addFunc&#39;,</span><br><span class="line">    props:[&#39;num1&#39;,&#39;num2&#39;],</span><br><span class="line">    data() &#123;</span><br><span class="line">      return&#123;</span><br><span class="line">        a: this.num1 ? this.num1 : 0,</span><br><span class="line">        b: this.num2 ? this.num2 : 0,</span><br><span class="line">        sum: 0,</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    mounted() &#123;</span><br><span class="line">      this.sumFunc();</span><br><span class="line">    &#125;,</span><br><span class="line">    methods:&#123;</span><br><span class="line">      sumFunc() &#123;</span><br><span class="line">        </span><br><span class="line">        let a &#x3D; Number(this.a);</span><br><span class="line">        let b &#x3D; Number(this.b);</span><br><span class="line">        if(isNaN(a) || isNaN(b)) &#123;</span><br><span class="line">          </span><br><span class="line">          return;</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">          this.sum &#x3D; a + b;</span><br><span class="line">          this.$emit(&#39;click&#39;,this.sum);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&lt;&#x2F;script&gt;</span><br><span class="line">&lt;style&gt;</span><br><span class="line">.calculate &#123;</span><br><span class="line">  width: 100%;</span><br><span class="line">  line-height: 26px;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line">&lt;&#x2F;style&gt;</span><br></pre></td></tr></table></figure>
+
+<p>1.4.写好了组件，我们本地看下效果先：</p>
+<p>　（1）打开 src/App.vue 文件，将下面代码复制，全部替换掉原来的代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div id&#x3D;&quot;app&quot;&gt;</span><br><span class="line">    &lt;h2&gt;calculate&lt;&#x2F;h2&gt;</span><br><span class="line">    &lt;sum-function :num1&#x3D;&quot;num1&quot; :num2&#x3D;&quot;num2&quot; @click&#x3D;&quot;receiveChildSum&quot;&gt;&lt;&#x2F;sum-function&gt;</span><br><span class="line">    </span><br><span class="line">    &lt;p&gt;从子组件获取到的值：&#123;&#123;sumFromChild&#125;&#125;&lt;&#x2F;p&gt;</span><br><span class="line">  &lt;&#x2F;div&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import sumFunction from &#39;..&#x2F;src&#x2F;myComponents&#x2F;sumFunction&#x2F;sum-function&#39;; &#x2F;&#x2F; 引入</span><br><span class="line">export default &#123;</span><br><span class="line">  name: &#39;app&#39;,</span><br><span class="line">  data () &#123;</span><br><span class="line">    return &#123;</span><br><span class="line">      num1: 4,</span><br><span class="line">      num2: 5,</span><br><span class="line">      sumFromChild:0</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  components:&#123; &#x2F;&#x2F;注册插件</span><br><span class="line">    sumFunction</span><br><span class="line">  &#125;,</span><br><span class="line">  methods:&#123;</span><br><span class="line">    receiveChildSum(sum)&#123; &#x2F;&#x2F;自定义事件，接收子组件的和</span><br><span class="line">      this.sumFromChild &#x3D; sum;</span><br><span class="line">      console.log(sum)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">&lt;&#x2F;script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line">#app &#123;</span><br><span class="line">  font-family: &#39;Avenir&#39;, Helvetica, Arial, sans-serif;</span><br><span class="line">  -webkit-font-smoothing: antialiased;</span><br><span class="line">  -moz-osx-font-smoothing: grayscale;</span><br><span class="line">  text-align: center;</span><br><span class="line">  color: #2c3e50;</span><br><span class="line">  margin-top: 60px;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">h1, h2 &#123;</span><br><span class="line">  font-weight: normal;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ul &#123;</span><br><span class="line">  list-style-type: none;</span><br><span class="line">  padding: 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">li &#123;</span><br><span class="line">  display: inline-block;</span><br><span class="line">  margin: 0 10px;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">a &#123;</span><br><span class="line">  color: #42b983;</span><br><span class="line">&#125;</span><br><span class="line">&lt;&#x2F;style&gt;</span><br></pre></td></tr></table></figure>
+
+<p>　　（2）执行 npm run dev 后页面效果如下：</p>
+<p><img src="%5Cimg%5Cvue_comp%5Cvue_033.png" alt=""></p>
+<p>这样我们的组件就写好了，接下来，要怎么把它处理好，让我们可以发布到公司的npm上面去</p>
+<p>　　1.5. 继续我们sumFuntion／index.js 文件，目的：将该组件作为 Vue 插件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; sumFunction 插件对应组件的名字</span><br><span class="line">import sumFunction from &#39;.&#x2F;sum-function&#39;;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; Vue.js 的插件应当有一个公开方法 install 。第一个参数是 Vue 构造器，第二个参数是一个可选的选项对象</span><br><span class="line">&#x2F;&#x2F; 参考：https:&#x2F;&#x2F;cn.vuejs.org&#x2F;v2&#x2F;guide&#x2F;plugins.html#%E5%BC%80%E5%8F%91%E6%8F%92%E4%BB%B6</span><br><span class="line">&#x2F;&#x2F; 此处注意，组件需要添加name属性，代表注册的组件名称，也可以修改成其他的</span><br><span class="line"> sumFunction.install &#x3D; Vue &#x3D;&gt; Vue.component(sumFunction.name, sumFunction);&#x2F;&#x2F;注册组件</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#x2F;* 支持使用标签的方式引入 Vue是全局变量时，自动install(参考element-ui)*&#x2F;</span><br><span class="line">const install &#x3D; function(Vue, opts &#x3D; &#123;&#125;) &#123;</span><br><span class="line">　  Vue.component(sumFunction.name, sumFunction);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (typeof window !&#x3D;&#x3D; &#39;undefined&#39; &amp;&amp; window.Vue) &#123;</span><br><span class="line"> install(window.Vue);</span><br><span class="line">&#125;</span><br><span class="line">export default sumFunction;</span><br></pre></td></tr></table></figure>
+
+<p>　　此处需要注意的是 <code>install</code>。 <code>Vue</code>的插件必须提供一个公开方法 <code>install</code>，该方法会在你使用该插件，也就是 <code>Vue.use(yourPlugin)</code>时被调用。这样也就给 <code>Vue</code>全局注入了你的所有的组件。</p>
+<p><strong>2. 修改配置项：</strong>　</p>
+<p>　　（1）修改 webpack.config.js ，修改完成后执行npm run build 看下是否生效</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 执行环境</span><br><span class="line">const NODE_ENV &#x3D; process.env.NODE_ENV;</span><br><span class="line">console.log(&quot;-----NODE_ENV&#x3D;&#x3D;&#x3D;&quot;,NODE_ENV);</span><br><span class="line"></span><br><span class="line">module.exports &#x3D; &#123;</span><br><span class="line">  &#x2F;&#x2F; 根据不同的执行环境配置不同的入口</span><br><span class="line">  entry: NODE_ENV &#x3D;&#x3D; &#39;development&#39; ? &#39;.&#x2F;src&#x2F;main.js&#39; : &#39;.&#x2F;src&#x2F;myPlugin&#x2F;sumFunction&#x2F;index.js&#39;,</span><br><span class="line">  output: &#123;</span><br><span class="line">    path: path.resolve(__dirname, &#39;.&#x2F;dist&#39;),</span><br><span class="line">    publicPath: &#39;&#x2F;dist&#x2F;&#39;,</span><br><span class="line">    filename: &#39;sumFunction.js&#39;,</span><br><span class="line">    library: &#39;sumFunction&#39;, &#x2F;&#x2F; 指定的就是你使用require时的模块名</span><br><span class="line">    libraryTarget: &#39;umd&#39;, &#x2F;&#x2F; 指定输出格式</span><br><span class="line">    umdNamedDefine: true &#x2F;&#x2F; 会对 UMD 的构建过程中的 AMD 模块进行命名。否则就使用匿名的 define</span><br><span class="line">  &#125;,</span><br></pre></td></tr></table></figure>
+
+<p>　　<strong>library</strong>：指定的就是你使用require时的模块名</p>
+<p>　　<strong>libraryTarget</strong>：为了支持多种使用场景，我们需要选择合适的打包格式。常见的打包格式有 CMD、AMD、UMD，CMD只能在 Node 环境执行，AMD 只能在浏览器端执行，UMD 同时支持两种执行环境。显而易见，我们应该选择 UMD 格式。</p>
+<p>　　<strong>有时我们想开发一个库，如lodash，underscore这些工具库，这些库既可以用commonjs和amd方式使用也可以用script方式引入。</strong></p>
+<p>　　<strong>这时候我们需要借助library和libraryTarget，我们只需要用ES6来编写代码，编译成通用的UMD就交给webpack了</strong></p>
+<p><strong>umdNamedDefine</strong>：会对 UMD 的构建过程中的 AMD 模块进行命名。否则就使用匿名的 define</p>
+<p>　　</p>
+<p>　　（2）修改package.json 文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 公司私有库名称 名字规范很重要，因为后面添加时比较容易懂</span><br><span class="line">&quot;name&quot;: &quot;@jstnpm&#x2F;vue_comp_addFunc&quot;,</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 因为是私有库因此需要将这个字段改为 false</span><br><span class="line">&quot;private&quot;: false,</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 这个指 import addFunc 的时候它会去检索的路径</span><br><span class="line">&quot;main&quot;: &quot;dist&#x2F;sumFunction.js&quot;,</span><br></pre></td></tr></table></figure>
+
+<p><strong>3. 提交发布：</strong></p>
+<p>　　（1）切换到需要发包的项目根目录下，登录npm账号，输入用户名、密码、邮箱</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm login --registry&#x3D;http:&#x2F;&#x2F;npm.jstxm.cn --scope&#x3D;@jstxm</span><br></pre></td></tr></table></figure>
+
+<p>　　（3）npm publish 执行发布：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm publish</span><br></pre></td></tr></table></figure>
+
+<p><strong>4. 查看是否提交成功：</strong></p>
+<p><strong>5. 下载安装，应用：</strong></p>
+<p>　　（1）确认是否发布成功：<a href="http://webnpm.jstxm.cn/browse/keyword/jstnpm" target="_blank" rel="noopener">查看预览目录</a>看是否你的包名在目录中，或者：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 下载我们的组件包</span><br><span class="line">npm install --save @jstnpm&#x2F;vue_comp_addFuncm   </span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; main.js中引入</span><br><span class="line">import addFun from &#39;@jstnpm&#x2F;vue_comp_addFunc&#39;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 全局使用</span><br><span class="line">Vue.use(addFun);</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;局部使用 .vue中文件引入</span><br><span class="line">import addFunc from &#39;@jstnpm&#x2F;vue_comp_addFunc&#39;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 组件中注册</span><br><span class="line">export default &#123;</span><br><span class="line">  name: &#39;app&#39;,</span><br><span class="line">  components: &#123;</span><br><span class="line">    addFunc</span><br><span class="line">  &#125;,</span><br><span class="line">  mounted() &#123;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>5. 最后说一下注意事项，以及一些常见的错误：</strong>　</p>
+<p>　　（1）提交npm 包时 package.json 记得 添加 “mian”字段</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;main&quot;: &quot;dist&#x2F;sumFunction.js&quot;,</span><br></pre></td></tr></table></figure>
+
+<p>　　（2）npm ERR! you do not have permission to publish “your module name”. Are you logged in as the   correct user?<br>　　　　包名被占用，改个包名即可。最好先查一下是否有包名被占用，之后再重命名</p>
+<p>​        （3）每次上到npm上需要更改版本号，package.json 里的 version 字段</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;version&quot;: &quot;1.0.1&quot;,&#96;npm login --registry&#x3D;http:&#x2F;&#x2F;npm.jstxm.cn --scope&#x3D;@jstxm&#96;</span><br></pre></td></tr></table></figure>
+
+<p>package.json中name请带上scope，如@jstxm/test</p>
+<p>最后发布</p>
+<p><code>npm publish</code></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">webpack</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">vue vue组件</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2020/04/25/%E7%BB%84%E4%BB%B6%E7%9A%84%E9%80%9A%E4%BF%A13%EF%BC%9AfindComponents/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">组件的通信</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -233,9 +317,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
